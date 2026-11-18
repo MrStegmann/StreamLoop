@@ -14,8 +14,8 @@ def test_real_dataset_ingestion_and_split(local_dataset_path: Path):
 
     assert len(df) == 7043
     assert "TotalCharges" in df.columns
-    # Check that whitespace rows are coerced to float (0.0)
-    assert df["TotalCharges"].isna().sum() == 0
+    # Check that whitespace rows are coerced to float NaN (preserving missingness for pipeline imputer)
+    assert df["TotalCharges"].isna().sum() == 11
 
     split = split_churn_dataset(df, test_size=0.2, random_state=42)
 

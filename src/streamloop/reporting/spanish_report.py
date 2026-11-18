@@ -155,7 +155,7 @@ def generate_spanish_tuning_report(
         f"| `min_samples_leaf` | [1, 2, 4, 6, 8, 10] | 1 | **{_clean_param(winning_candidate.params, 'min_samples_leaf', 1)}** |",
         f"| `max_features` | ['sqrt', 'log2', 0.2, 0.4, 0.6] | 'sqrt' | **{_clean_param(winning_candidate.params, 'max_features', 'sqrt')}** |",
         f"| `criterion` | ['gini', 'entropy'] | 'gini' | **{_clean_param(winning_candidate.params, 'criterion', 'gini')}** |",
-        f"| `class_weight` | ['balanced', 'balanced_subsample'] | 'balanced' | **{_clean_param(winning_candidate.params, 'class_weight', 'balanced')}** |",
+        f"| `class_weight` | [None, 'balanced', 'balanced_subsample'] | None | **{_clean_param(winning_candidate.params, 'class_weight', 'None')}** |",
         "",
         "---",
         "",

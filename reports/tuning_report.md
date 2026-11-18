@@ -66,7 +66,7 @@ $$F_2 = (1 + 2^2) \cdot \frac{\text{Precision} \cdot \text{Recall}}{2^2 \cdot \t
 | `min_samples_leaf` | [1, 2, 4, 6, 8, 10] | 1 | **2** |
 | `max_features` | ['sqrt', 'log2', 0.2, 0.4, 0.6] | 'sqrt' | **0.2** |
 | `criterion` | ['gini', 'entropy'] | 'gini' | **gini** |
-| `class_weight` | ['balanced', 'balanced_subsample'] | 'balanced' | **balanced** |
+| `class_weight` | [None, 'balanced', 'balanced_subsample'] | None | **balanced** |
 
 ---
 
