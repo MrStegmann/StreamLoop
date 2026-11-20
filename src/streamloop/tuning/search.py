@@ -22,7 +22,7 @@ STAGE1_PARAM_DISTRIBUTIONS: dict[str, list[Any]] = {
     "classifier__min_samples_leaf": [1, 2, 4, 6, 8, 10],
     "classifier__max_features": ["sqrt", "log2", 0.2, 0.4, 0.6],
     "classifier__criterion": ["gini", "entropy"],
-    "classifier__class_weight": ["balanced", "balanced_subsample"],
+    "classifier__class_weight": [None, "balanced", "balanced_subsample"],
 }
 
 
@@ -41,7 +41,9 @@ def build_stage2_param_grid(stage1_best_params: dict[str, Any]) -> dict[str, lis
     min_leaf = stage1_best_params.get("classifier__min_samples_leaf", 4)
     max_feat = stage1_best_params.get("classifier__max_features", "sqrt")
     crit = stage1_best_params.get("classifier__criterion", "gini")
-    weight = stage1_best_params.get("classifier__class_weight", "balanced")
+    weight = stage1_best_params.get(
+        "classifier__class_weight", stage1_best_params.get("class_weight", None)
+    )
 
     # Localized n_estimators (2 values)
     n_estimators_grid = sorted(list({max(50, n_est - 50), n_est, n_est + 50}))[:2]

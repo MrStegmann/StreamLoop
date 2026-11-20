@@ -6,10 +6,19 @@ import pandas as pd
 
 from streamloop.data.split import split_churn_dataset
 from streamloop.tuning.search import (
+    STAGE1_PARAM_DISTRIBUTIONS,
     build_stage2_param_grid,
     extract_candidate_evaluations,
     run_stage1_randomized_search,
 )
+
+
+def test_stage1_param_distributions_includes_none_class_weight():
+    """Verify Stage 1 search space includes None (default) for class_weight."""
+    assert "classifier__class_weight" in STAGE1_PARAM_DISTRIBUTIONS
+    assert None in STAGE1_PARAM_DISTRIBUTIONS["classifier__class_weight"]
+    assert "balanced" in STAGE1_PARAM_DISTRIBUTIONS["classifier__class_weight"]
+    assert "balanced_subsample" in STAGE1_PARAM_DISTRIBUTIONS["classifier__class_weight"]
 
 
 def test_build_stage2_param_grid():
@@ -29,6 +38,20 @@ def test_build_stage2_param_grid():
     assert 200 in grid["classifier__n_estimators"]
     assert 8 in grid["classifier__max_depth"]
     assert len(grid["classifier__n_estimators"]) > 1
+    assert grid["classifier__class_weight"] == ["balanced"]
+
+    # Verify when class_weight is None
+    stage1_none_params = {
+        "classifier__n_estimators": 100,
+        "classifier__max_depth": None,
+        "classifier__min_samples_split": 2,
+        "classifier__min_samples_leaf": 1,
+        "classifier__max_features": "sqrt",
+        "classifier__criterion": "gini",
+        "classifier__class_weight": None,
+    }
+    grid_none = build_stage2_param_grid(stage1_none_params)
+    assert grid_none["classifier__class_weight"] == [None]
 
 
 def test_stage1_search_execution(sample_raw_telco_df: pd.DataFrame):

@@ -69,20 +69,17 @@ def validate_raw_dataset(df: pd.DataFrame, min_rows: int = 1000) -> None:
 def clean_churn_dataset(df: pd.DataFrame) -> pd.DataFrame:
     """Clean types and handle whitespace in Telco dataset.
 
-    - TotalCharges: Converts whitespace strings to 0.0 and coerces to float.
+    - TotalCharges: Coerces whitespace and invalid strings to NaN (float) to preserve
+      missingness for downstream pipeline imputation.
     - Churn: Maps 'Yes' -> 1, 'No' -> 0 if string.
     """
     cleaned_df = df.copy()
 
-    # TotalCharges coercion
+    # TotalCharges coercion: convert whitespace and numeric strings to float, preserving NaNs
     if "TotalCharges" in cleaned_df.columns:
-        if cleaned_df["TotalCharges"].dtype == object:
-            cleaned_df["TotalCharges"] = cleaned_df["TotalCharges"].replace(
-                r"^\s*$", "0.0", regex=True
-            )
         cleaned_df["TotalCharges"] = pd.to_numeric(
             cleaned_df["TotalCharges"], errors="coerce"
-        ).fillna(0.0)
+        )
 
     # Churn target coercion: Convert "Yes"/"No" or string values to binary integer 1 / 0
     if "Churn" in cleaned_df.columns:

@@ -8,21 +8,21 @@ Este documento consolida los resultados del proceso de optimización sistemátic
 
 | Métrica | Modelo Base (Default) | Modelo Ajustado (Ganador 1-SE) | Mejora Relativa |
 | :--- | :---: | :---: | :---: |
-| **F2 Score** (Métrica Primaria) | 0.6031 | **0.7209** | **+19.5%** |
-| **Recall** (Sensibilidad Churn) | 0.6176 | **0.7968** | **+29.0%** |
-| **Precision** | 0.5513 | 0.5219 | -5.3% |
-| **F1 Score** | 0.5826 | 0.6307 | +8.3% |
-| **PR-AUC** | 0.6018 | 0.6549 | +8.8% |
-| **ROC-AUC** | 0.8228 | 0.8427 | +2.4% |
+| **F2 Score** (Métrica Primaria) | 0.4986 | **0.7205** | **+44.5%** |
+| **Recall** (Sensibilidad Churn) | 0.4759 | **0.7968** | **+67.4%** |
+| **Precision** | 0.6159 | 0.5210 | -15.4% |
+| **F1 Score** | 0.5370 | 0.6300 | +17.3% |
+| **PR-AUC** | 0.5987 | 0.6528 | +9.0% |
+| **ROC-AUC** | 0.8176 | 0.8434 | +3.2% |
 
 ### Matrices de Confusión Comparativas
 
 #### Modelo Base:
-- Verdaderos Negativos (TN): 847 | Falsos Positivos (FP): 188
-- Falsos Negativos (FN): 143 | Verdaderos Positivos (TP): 231
+- Verdaderos Negativos (TN): 924 | Falsos Positivos (FP): 111
+- Falsos Negativos (FN): 196 | Verdaderos Positivos (TP): 178
 
 #### Modelo Ajustado (Ganador 1-SE):
-- Verdaderos Negativos (TN): 762 | Falsos Positivos (FP): 273
+- Verdaderos Negativos (TN): 761 | Falsos Positivos (FP): 274
 - Falsos Negativos (FN): 76 | Verdaderos Positivos (TP): 298
 
 ### Verificación de Aislamiento y Ausencia de Fuga de Datos
@@ -60,13 +60,13 @@ $$F_2 = (1 + 2^2) \cdot \frac{\text{Precision} \cdot \text{Recall}}{2^2 \cdot \t
 
 | Hiperparámetro | Rango / Opciones Exploradas | Modelo Base | Configuración Ganadora (1-SE) |
 | :--- | :--- | :---: | :---: |
-| `n_estimators` | [50, 100, 150, 200, 250, 300, 400] | 100 | **100** |
-| `max_depth` | [None, 5, 8, 10, 12, 15, 20] | None | **7** |
-| `min_samples_split` | [2, 5, 10, 15, 20] | 2 | **5** |
-| `min_samples_leaf` | [1, 2, 4, 6, 8, 10] | 1 | **2** |
-| `max_features` | ['sqrt', 'log2', 0.2, 0.4, 0.6] | 'sqrt' | **0.2** |
+| `n_estimators` | [50, 100, 150, 200, 250, 300, 400] | 100 | **200** |
+| `max_depth` | [None, 5, 8, 10, 12, 15, 20] | None | **8** |
+| `min_samples_split` | [2, 5, 10, 15, 20] | 2 | **13** |
+| `min_samples_leaf` | [1, 2, 4, 6, 8, 10] | 1 | **8** |
+| `max_features` | ['sqrt', 'log2', 0.2, 0.4, 0.6] | 'sqrt' | **sqrt** |
 | `criterion` | ['gini', 'entropy'] | 'gini' | **gini** |
-| `class_weight` | ['balanced', 'balanced_subsample'] | 'balanced' | **balanced** |
+| `class_weight` | [None, 'balanced', 'balanced_subsample'] | None | **balanced** |
 
 ---
 
@@ -77,18 +77,18 @@ Seleccionar ciegamente la configuración con el mayor promedio de validación cr
 
 $$\text{SE} = \frac{\sigma}{\sqrt{k}} = \frac{\sigma}{\sqrt{5}}$$
 
-Se calcula el umbral de aceptación $T = \bar{S}_{\max} - \text{SE}_{\max} = 0.7299 - 0.0066 = 0.7233$. Cualquier modelo cuya media de F2 sea igual o superior a dicho umbral se considera estadísticamente equivalente. Entre los candidatos calificados, se selecciona aquel con la menor desviación estándar entre pliegues ($\sigma$), garantizando la máxima estabilidad y generalización en producción.
+Se calcula el umbral de aceptación $T = \bar{S}_{\max} - \text{SE}_{\max} = 0.7263 - 0.0071 = 0.7192$. Cualquier modelo cuya media de F2 sea igual o superior a dicho umbral se considera estadísticamente equivalente. Entre los candidatos calificados, se selecciona aquel con la menor desviación estándar entre pliegues ($\sigma$), garantizando la máxima estabilidad y generalización en producción.
 
 ### Tabla Comparativa de Candidatos Top en Validación Cruzada
 
 | Candidato ID | Media F2 en CV ($\bar{S}$) | Desv. Estándar ($\sigma$) | Error Estándar ($\text{SE}$) | ¿Cumple 1-SE? | Estado |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| #10 | 0.7299 | 0.0148 | 0.0066 | Sí | Mayor Media CV |
-| #14 | 0.7294 | 0.0156 | 0.0070 | Sí | Candidato |
-| #8 | 0.7289 | 0.0150 | 0.0067 | Sí | Candidato |
-| #12 | 0.7282 | 0.0148 | 0.0066 | Sí | Candidato |
-| #13 | 0.7277 | 0.0166 | 0.0074 | Sí | Candidato |
-| #22 | 0.7237 | 0.0134 | 0.0060 | Sí | Ganador Seleccionado (1-SE) |
+| #5 | 0.7263 | 0.0158 | 0.0071 | Sí | Mayor Media CV |
+| #7 | 0.7263 | 0.0158 | 0.0071 | Sí | Candidato |
+| #2 | 0.7262 | 0.0171 | 0.0077 | Sí | Candidato |
+| #3 | 0.7261 | 0.0159 | 0.0071 | Sí | Candidato |
+| #0 | 0.7255 | 0.0160 | 0.0072 | Sí | Candidato |
+| #12 | 0.7213 | 0.0113 | 0.0050 | Sí | Ganador Seleccionado (1-SE) |
 
 ### Justificación del Modelo Seleccionado
-El candidato **#22** fue seleccionado porque, además de situarse holgadamente dentro del umbral estadístico 1-SE (F2 medio de 0.7237 frente a umbral 0.7233), presentó la menor variabilidad entre pliegues ($\sigma = 0.0134$). Esto garantiza que el clasificador no es vulnerable a variaciones locales en la distribución de datos y ofrecerá un comportamiento predecible y robusto durante su despliegue operativo en StreamLoop.
+El candidato **#12** fue seleccionado porque, además de situarse holgadamente dentro del umbral estadístico 1-SE (F2 medio de 0.7213 frente a umbral 0.7192), presentó la menor variabilidad entre pliegues ($\sigma = 0.0113$). Esto garantiza que el clasificador no es vulnerable a variaciones locales en la distribución de datos y ofrecerá un comportamiento predecible y robusto durante su despliegue operativo en StreamLoop.

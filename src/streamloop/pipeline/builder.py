@@ -85,7 +85,6 @@ def build_churn_pipeline(
     """
     params: dict[str, Any] = {
         "random_state": random_state,
-        "class_weight": "balanced",
     }
     if classifier_params:
         params.update(classifier_params)
